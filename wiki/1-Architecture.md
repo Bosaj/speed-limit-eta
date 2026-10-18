@@ -1,17 +1,25 @@
-# 1. Architecture
+# Architecture & System Design
 
-1. Route: OSRM or Valhalla on Morocco OSM extract.
-2. Segment speeds: OSM maxspeed, else Moroccan default limits by road class, else community reports.
-3. ETA: sum of segment length / speed, with a per-segment breakdown and a confidence score.
-4. Contribute: photo of a speed sign, location and value, reviewed before export to OSM.
+This document details the system design, components, and communication topology of **Road Speed Limit Travel Time & Dynamic ETA Calculator**.
 
-## Proposed stack
-- Valhalla or OSRM (Docker)
-- MapLibre GL web map
-- PostGIS for community reports
+```mermaid
+flowchart TD
+    Client["Client / User Interface"] --> Core["Core Processing Engine"]
+    Core --> Ingestion["Data Ingestion & Adapters"]
+    Core --> Persistence["Storage / Cache Layer"]
+    Core --> Verification["Validation & Safety Layer"]
+```
 
-## Open bases to fork
-- [OSM Key:maxspeed](https://wiki.openstreetmap.org/wiki/Key:maxspeed) — How speed limits are tagged in OpenStreetMap.
-- [Project-OSRM/osrm-backend](https://github.com/Project-OSRM/osrm-backend) — Fast routing engine on OSM data.
-- [valhalla/valhalla](https://github.com/valhalla/valhalla) — Routing engine with costing models.
-- [graphhopper/graphhopper](https://github.com/graphhopper/graphhopper) — Routing engine, Java.
+## Core Subsystems
+
+### 1. Ingestion & Preprocessing
+Handles raw input data, validates schema compliance, normalizes inputs, and eliminates malformed requests.
+
+### 2. Processing & Business Logic
+Executes the primary business logic and domain processing pipelines efficiently and deterministically.
+
+### 3. Verification & Safety Guards
+Enforces safety rules, sanitizes data structures, and validates output integrity before presentation.
+
+### 4. Storage & State Management
+Maintains persistent state, caches hot queries, and guarantees data durability.
